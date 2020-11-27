@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.*;
 import java.util.Scanner;
 
 public class FactoryAssigner {
@@ -12,6 +11,7 @@ public class FactoryAssigner {
 
     void iterateSubsetsRecursive(int[] arr, int i, int sum,
                                  ArrayList<Integer> p, ArrayList<ArrayList<Integer>> solutions) {
+        //success case, we found an entry with requested sum, add as solution
         if (i == 0 && sum != 0 && dp[0][sum]) {
             p.add(arr[i]);
             solutions.add(new ArrayList<>(p));
@@ -19,17 +19,20 @@ public class FactoryAssigner {
             return;
         }
 
+        //success case, if requested sum is reduced to zero, add as solution
         if (i == 0 && sum == 0) {
             solutions.add(new ArrayList<>(p));
             p.clear();
             return;
         }
 
+        //recursive case a) ignore the current element
         if (dp[i - 1][sum]) {
             ArrayList<Integer> b = new ArrayList<>(p);
             iterateSubsetsRecursive(arr, i - 1, sum, b, solutions);
         }
 
+        //recursive case b) include current element in the sublist, continue search with (sum - currentelement)
         if (sum >= arr[i] && dp[i - 1][sum - arr[i]]) {
             p.add(arr[i]);
             iterateSubsetsRecursive(arr, i - 1, sum - arr[i], p, solutions);
@@ -56,7 +59,7 @@ public class FactoryAssigner {
                         : dp[i - 1][j];
         //if we cannot reach the expected sum, then there's no solution without a waste
         if (!dp[n - 1][sum]) {
-            //System.out.println("There are solutions with sum"+ sum);
+            //System.out.println("There no are solutions with sum "+ sum);
             return new ArrayList<>();
         }
 

@@ -34,9 +34,9 @@ public class BSTChecker {
         Scanner scan = new Scanner(System.in);
         String[] arr = Arrays.stream(scan.nextLine().split(",")).map(String::trim).toArray(String[]::new);
         if (bst.isPreOrderValidForBST(arr, arr.length)) {
-            System.out.println("true");
+            System.out.println("YES");
         } else {
-            System.out.println("false");
+            System.out.println("NO");
         }
     }
 

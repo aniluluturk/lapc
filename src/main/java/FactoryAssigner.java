@@ -37,22 +37,6 @@ public class FactoryAssigner {
     }
 
     ArrayList<ArrayList<Integer>> getAllSubsetsWithGivenSum(int[] arr, int n, int sum) {
-        //if either n=0 or sum is less than 0, there is no solution available
-        if (n == 0 || sum < 0) {
-            System.out.println("Nr solutions=0");
-            return new ArrayList<>();
-        }
-        //get total sum of the given array
-        int total = Arrays.stream(arr).sum();
-        //if there's no leg room to create sub-lists anyway, then there's only one solution = original array
-        if (total <= sum) {
-            ArrayList<Integer> arrAsList = Arrays.stream(arr).boxed().collect(Collectors.toCollection(ArrayList::new));
-            System.out.println("Nr solutions=1");
-            printAssignmentList(arrAsList);
-            System.out.println("Waste=" + (sum - total));
-            return new ArrayList<>(List.of(arrAsList));
-        }
-
         //init matrix for dynamic programming
         dp = new boolean[n][sum + 1];
         //init 0 row to true, because solution for 0 sum is trivial (empty sublist)
@@ -73,7 +57,6 @@ public class FactoryAssigner {
         //if we cannot reach the expected sum, then there's no solution without a waste
         if (!dp[n - 1][sum]) {
             //System.out.println("There are solutions with sum"+ sum);
-            System.out.println("Nr solutions=0");
             return new ArrayList<>();
         }
 
@@ -83,10 +66,43 @@ public class FactoryAssigner {
         ArrayList<ArrayList<Integer>> solutions = new ArrayList<>();
         //call recursive function to iterate over solutions and add them to 'solutions' list
         iterateSubsetsRecursive(arr, n - 1, sum, p, solutions);
-        //print out the result
-        System.out.println("Nr solutions=" + solutions.size());
-        solutions.forEach(this::printAssignmentList);
-        System.out.println("Waste=0");
+        return solutions;
+    }
+
+    ArrayList<ArrayList<Integer>> getAllSubsetsEqualOrGreaterThanGivenSum(int[] arr, int n, int sum) {
+        int initialSum = sum;
+        boolean solutionExists = false;
+        //if either n=0 or sum is less than 0, there is no solution available
+        if (n == 0 || sum < 0) {
+            System.out.println("Nr solutions=0");
+            return new ArrayList<>();
+        }
+        //get total sum of the given array
+        int total = Arrays.stream(arr).sum();
+        //if the sum is above the total amount that workers can produce, then solution is not possible
+        if (total < sum) {
+            System.out.println("Nr solutions=0");
+            return new ArrayList<>();
+        }
+
+        ArrayList<ArrayList<Integer>> solutions = new ArrayList<>();
+        //if we can't find the perfect solution, keep increasing 'sum' until we find a solution with waste
+        while(!solutionExists && sum <= total) {
+            solutions = getAllSubsetsWithGivenSum(arr, n, sum);
+            solutionExists = solutions.size() > 0;
+            sum++;
+        }
+
+        if(solutions.size() > 0) {
+            //print out the result
+            System.out.println("Nr solutions=" + solutions.size());
+            solutions.forEach(this::printAssignmentList);
+            System.out.println("Waste=" + (sum - initialSum - 1));
+        } else {
+            System.out.println("Nr solutions=0");
+            return new ArrayList<>();
+        }
+
         return solutions;
     }
 
@@ -103,6 +119,6 @@ public class FactoryAssigner {
             arr[i] = scan.nextInt();
         }
         int sum = scan.nextInt();
-        factoryAssigner.getAllSubsetsWithGivenSum(arr, n, sum);
+        factoryAssigner.getAllSubsetsEqualOrGreaterThanGivenSum(arr, n, sum);
     }
 } 

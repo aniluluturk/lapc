@@ -18,24 +18,49 @@ public class FactoryAssignerTest {
                 new ArrayList<>(List.of(6, 5))
         ));
 
-        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsWithGivenSum(arr, arr.length, 11);
+        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsEqualOrGreaterThanGivenSum(arr, arr.length, sum);
         assertEquals(4, solutions.size());
         assertEquals(expectedSolutions, solutions);
     }
 
-    //if sum is too high, we should get the trivial solution, which is the original array with workers
     @Test
-    void checkTrivialAssignment_whenSumIsTooHigh() {
+    void checkSuccessfulAssignmentWithWaste_whenNoPerfectAssignmentExists() {
+        FactoryAssigner factoryAssigner = new FactoryAssigner();
+        int[] arr = new int[]{6, 7, 15};
+        int sum = 8;
+        ArrayList<ArrayList<Integer>> expectedSolutions = new ArrayList<>(List.of(
+                new ArrayList<>(List.of(7, 6))
+        ));
+
+        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsEqualOrGreaterThanGivenSum(arr, arr.length, sum);
+        assertEquals(1, solutions.size());
+        assertEquals(expectedSolutions, solutions);
+    }
+
+    @Test
+    void checkMultipleSuccessfulAssignmentsWithWaste_whenNoPerfectAssignmentExists() {
+        FactoryAssigner factoryAssigner = new FactoryAssigner();
+        int[] arr = new int[]{2, 5, 7, 8, 11};
+        int sum = 6;
+        ArrayList<ArrayList<Integer>> expectedSolutions = new ArrayList<>(List.of(
+                new ArrayList<>(List.of(5, 2)),
+                new ArrayList<>(List.of(7))
+        ));
+
+        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsEqualOrGreaterThanGivenSum(arr, arr.length, sum);
+        assertEquals(2, solutions.size());
+        assertEquals(expectedSolutions, solutions);
+    }
+
+    //if sum is too high, there's no way to satisfy the expected production
+    @Test
+    void checkUnsuccessfulAssignment_whenSumIsTooHigh() {
         FactoryAssigner factoryAssigner = new FactoryAssigner();
         int[] arr = new int[]{1, 2, 4, 3};
         int sum = 13;
-        ArrayList<ArrayList<Integer>> expectedSolutions = new ArrayList<>(List.of(
-                new ArrayList<>(List.of(1, 2, 4, 3))
-        ));
 
-        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsWithGivenSum(arr, arr.length, sum);
-        assertEquals(1, solutions.size());
-        assertEquals(expectedSolutions, solutions);
+        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsEqualOrGreaterThanGivenSum(arr, arr.length, sum);
+        assertEquals(0, solutions.size());
     }
 
     //expecting a negative sum to be gathered from workers should return no solution
@@ -45,7 +70,7 @@ public class FactoryAssignerTest {
         int[] arr = new int[]{1, 2, 4, 3};
         int sum = -1;
 
-        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsWithGivenSum(arr, arr.length, sum);
+        ArrayList<ArrayList<Integer>> solutions = factoryAssigner.getAllSubsetsEqualOrGreaterThanGivenSum(arr, arr.length, sum);
         assertEquals(0, solutions.size());
     }
 }

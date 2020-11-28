@@ -1,4 +1,6 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class FactoryAssigner {
@@ -10,25 +12,25 @@ public class FactoryAssigner {
     }
 
     void iterateSubsetsRecursive(int[] arr, int i, int sum,
-                                 ArrayList<Integer> p, ArrayList<ArrayList<Integer>> solutions) {
+                                 List<Integer> p, List<List<Integer>> solutions) {
         //success case, we found an entry with requested sum, add as solution
         if (i == 0 && sum != 0 && dp[0][sum]) {
             p.add(arr[i]);
-            solutions.add(new ArrayList<>(p));
+            solutions.add(List.copyOf(p));
             p.clear();
             return;
         }
 
         //success case, if requested sum is reduced to zero, add as solution
         if (i == 0 && sum == 0) {
-            solutions.add(new ArrayList<>(p));
+            solutions.add(List.copyOf(p));
             p.clear();
             return;
         }
 
         //recursive case a) ignore the current element
         if (dp[i - 1][sum]) {
-            ArrayList<Integer> b = new ArrayList<>(p);
+            List<Integer> b = new ArrayList<>(p);
             iterateSubsetsRecursive(arr, i - 1, sum, b, solutions);
         }
 
@@ -39,7 +41,7 @@ public class FactoryAssigner {
         }
     }
 
-    ArrayList<ArrayList<Integer>> getAllSubsetsWithGivenSum(int[] arr, int n, int sum) {
+    List<List<Integer>> getAllSubsetsWithGivenSum(int[] arr, int n, int sum) {
         //init matrix for dynamic programming
         dp = new boolean[n][sum + 1];
         //init 0 row to true, because solution for 0 sum is trivial (empty sublist)
@@ -60,50 +62,45 @@ public class FactoryAssigner {
         //if we cannot reach the expected sum, then there's no solution without a waste
         if (!dp[n - 1][sum]) {
             //System.out.println("There no are solutions with sum "+ sum);
-            return new ArrayList<>();
+            return List.of();
         }
 
         //current subset (payload) that will be manipulated throughout the recursive function
-        ArrayList<Integer> p = new ArrayList<>();
+        List<Integer> p = new ArrayList<>();
         //array which successful solutions will be added into
-        ArrayList<ArrayList<Integer>> solutions = new ArrayList<>();
+        List<List<Integer>> solutions = new ArrayList<>();
         //call recursive function to iterate over solutions and add them to 'solutions' list
         iterateSubsetsRecursive(arr, n - 1, sum, p, solutions);
         return solutions;
     }
 
-    ArrayList<ArrayList<Integer>> getAllSubsetsEqualOrGreaterThanGivenSum(int[] arr, int n, int sum) {
+    List<List<Integer>> getAllSubsetsEqualOrGreaterThanGivenSum(int[] arr, int n, int sum) {
         int initialSum = sum;
         boolean solutionExists = false;
         //if either n=0 or sum is less than 0, there is no solution available
         if (n == 0 || sum < 0) {
             System.out.println("Nr solutions=0");
-            return new ArrayList<>();
+            return List.of();
         }
         //get total sum of the given array
         int total = Arrays.stream(arr).sum();
-        //if the sum is above the total amount that workers can produce, then solution is not possible
-        if (total < sum) {
-            System.out.println("Nr solutions=0");
-            return new ArrayList<>();
-        }
 
-        ArrayList<ArrayList<Integer>> solutions = new ArrayList<>();
+        List<List<Integer>> solutions = List.of();
         //if we can't find the perfect solution, keep increasing 'sum' until we find a solution with waste
-        while(!solutionExists && sum <= total) {
+        while (!solutionExists && sum <= total) {
             solutions = getAllSubsetsWithGivenSum(arr, n, sum);
             solutionExists = solutions.size() > 0;
             sum++;
         }
 
-        if(solutions.size() > 0) {
+        if (solutions.size() > 0) {
             //print out the result
             System.out.println("Nr solutions=" + solutions.size());
             solutions.forEach(this::printAssignmentList);
             System.out.println("Waste=" + (sum - initialSum - 1));
         } else {
             System.out.println("Nr solutions=0");
-            return new ArrayList<>();
+            return List.of();
         }
 
         return solutions;

@@ -27,6 +27,28 @@ expected input format
 node_string_value1, node_string_value2, node_string_value3 ...
 ```
 
+## To run main methods 
+
+first build the project with `mvn clean install`
+
+### Q1: FactoryAssigner
+
+1. run from target class FactorAssigner
+
+    ```
+    java -classpath target\classes FactoryAssigner
+    ```
+1. provide input to stdin
+
+### Q2: BSTChecker
+
+1. run from target class BSTChecker
+    
+    ```
+    java -classpath target\classes BSTChecker
+    ```
+1. provide input to stdin
+
 ## Tests
 
 project contains test for both questions, to execute
